@@ -1,1 +1,15 @@
+name: Compilar Projeto
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configurar ambiente
+        run: echo "Configuração concluída!"
 
