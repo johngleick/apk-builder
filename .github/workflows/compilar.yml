@@ -1,16 +1,44 @@
-name: Compilar Projeto
+name: Build APK
 
 on:
   push:
     branches:
       - main
+    paths:
+      - '**.zip'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Configurar ambiente
-        run: echo "Configuração concluída!"
 
-Cria arquivo de workflow compilar.yml
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v3
+
+    - name: Instalar Java 17 (recomendado para Android)
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: 17
+
+    - name: Verificar arquivos ZIP
+      run: ls -l
+
+    - name: Extrair ZIP
+      run: unzip *.zip -d projeto
+
+    - name: Preparar o projeto
+      run: |
+        cd projeto
+        chmod +x ./gradlew
+
+    - name: Compilar APK
+      run: |
+        cd projeto
+        ./gradlew assembleDebug
+
+    - name: Salvar APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: app-debug.apk
+        path: projeto/app/build/outputs/apk/debug/app-debug.apk
